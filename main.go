@@ -11,6 +11,7 @@ import (
 )
 
 var duration = flag.Int("d", 10, "duration in seconds")
+var workers = flag.Int("w", 3, "number of workers (tests) to run in parallel")
 
 func main() {
 	flag.Parse()
@@ -36,4 +37,10 @@ func main() {
 
 	log.Printf("services started")
 	time.Sleep(3 * time.Second)
+
+	cfg.TestDuration = time.Duration(*duration) * time.Second
+	cfg.TestRunners = *workers
+	cfg.Run()
+
+	cfg.Stop()
 }

@@ -11,11 +11,16 @@ var hotrod = model.Config{
 		},
 		&model.Service{
 			Name: "frontend",
-			Depends: &model.Dependencies{
-				Seq: model.Sequence{
-					{Service: &model.ServiceDep{Name: "customer"}},
-					{Service: &model.ServiceDep{Name: "driver"}},
-					{Service: &model.ServiceDep{Name: "route"}},
+			Endpoints: []*model.Endpoint{
+				&model.Endpoint{
+					Name: "/dispatch",
+					Depends: &model.Dependencies{
+						Seq: model.Sequence{
+							{Service: &model.ServiceDep{Name: "customer"}},
+							{Service: &model.ServiceDep{Name: "driver"}},
+							{Service: &model.ServiceDep{Name: "route"}},
+						},
+					},
 				},
 			},
 		},

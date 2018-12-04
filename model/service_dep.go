@@ -17,7 +17,9 @@ func (s *ServiceDep) Validate(r *Registry) error {
 	if service == nil {
 		return fmt.Errorf("Service dependency: unknown service name %s", s.Name)
 	}
-	if s.Endpoint != "" {
+	if s.Endpoint == "" {
+		s.Endpoint = service.DefaultEndpoint().Name
+	} else {
 		if service.Endpoint(s.Endpoint) == nil {
 			return fmt.Errorf("Service dependency: unknown endpoint %s for service %s", s.Endpoint, s.Name)
 		}

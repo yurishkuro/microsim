@@ -1,6 +1,7 @@
 package model
 
 import (
+	"context"
 	"fmt"
 )
 
@@ -35,5 +36,11 @@ func (d *Dependencies) Validate(r *Registry) error {
 	if count != 1 {
 		return fmt.Errorf("Dependencies: exactly one of the fields must be populated")
 	}
+	return nil
+}
+
+// Call makes calls to all dependencies.
+func (d *Dependencies) Call(ctx context.Context) error {
+	// TODO
 	return nil
 }

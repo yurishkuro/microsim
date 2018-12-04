@@ -1,12 +1,22 @@
 package model
 
 import (
+	"context"
 	"fmt"
+	"log"
+	"sync"
+	"time"
+
+	opentracing "github.com/opentracing/opentracing-go"
+	"github.com/yurishkuro/microsim/tracing"
 )
 
 // Config is config.
 type Config struct {
 	Services []*Service
+
+	TestDuration time.Duration
+	TestRunners  int
 }
 
 // Validate performs validation and sets defaults.
@@ -30,4 +40,56 @@ func (c *Config) Start() error {
 		}
 	}
 	return nil
+}
+
+// Stop stops the simulation.
+func (c *Config) Stop() {
+	for _, service := range c.Services {
+		service.Stop()
+	}
+}
+
+// Run runs the simulation.
+func (c *Config) Run() {
+	stop := make(chan struct{})
+	done := &sync.WaitGroup{}
+	done.Add(c.TestRunners)
+	for i := 0; i < c.TestRunners; i++ {
+		name := fmt.Sprintf("test-executor-%d", i)
+		go c.runWorker(name, stop, done)
+	}
+	log.Printf("started %d test executors", c.TestRunners)
+	log.Printf("running for %v", c.TestDuration)
+	time.Sleep(c.TestDuration)
+	log.Printf("stopping test executors")
+	close(stop)
+	log.Printf("waiting for test executors to exit")
+	done.Wait()
+}
+
+func (c *Config) runWorker(name string, stop chan struct{}, done *sync.WaitGroup) {
+	tracer, closer, err := tracing.InitTracer(name)
+	if err != nil {
+		log.Fatalf("failed to create a tracer: %v", err)
+	}
+	defer closer.Close()
+	defer done.Done()
+	for {
+		select {
+		case <-stop:
+			return
+		default:
+			c.runTest(tracer)
+		}
+	}
+}
+
+func (c *Config) runTest(tracer opentracing.Tracer) {
+	rootSvc := c.Services[0]
+	inst := rootSvc.Instances[0]
+	endpoint := inst.Endpoints[0]
+	err := endpoint.Call(context.Background(), tracer)
+	if err != nil {
+		log.Printf("transaction failed: %v", err)
+	}
 }

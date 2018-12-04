@@ -2,19 +2,17 @@ package model
 
 import (
 	"fmt"
-	"log"
-	"net/http"
-	"net/http/httptest"
+	"sync/atomic"
 )
 
 // Service is service.
 type Service struct {
 	Name      string
-	Endpoints []*Endpoint   `json:",omitempty"`
-	Count     int           `json:",omitempty"`
-	Depends   *Dependencies `json:",omitempty"`
+	Endpoints []*Endpoint `json:",omitempty"`
+	Count     int         `json:",omitempty"`
 
-	servers []*httptest.Server
+	Instances  []*ServiceInstance
+	nextServer uint64
 }
 
 // Validate validates Service and sets defaults.
@@ -32,14 +30,8 @@ func (s *Service) Validate(r *Registry) error {
 		s.Endpoints = []*Endpoint{defaultEndpoint()}
 	}
 	for i, endpoint := range s.Endpoints {
-		if err := endpoint.Validate(r); err != nil {
+		if err := endpoint.Validate(s, r); err != nil {
 			return fmt.Errorf("%s: endpoint[%d] validation error: %v", s.Name, i, err)
-		}
-		endpoint.service = s
-	}
-	if s.Depends != nil {
-		if err := s.Depends.Validate(r); err != nil {
-			return fmt.Errorf("%s: dependencies validation error: %v", s.Name, err)
 		}
 	}
 	return nil
@@ -55,6 +47,15 @@ func (s *Service) Endpoint(name string) *Endpoint {
 	return nil
 }
 
+// DefaultEndpoint returns default endpoint for this service (always the first).
+// If none are defined, it creates one.
+func (s *Service) DefaultEndpoint() *Endpoint {
+	if len(s.Endpoints) == 0 {
+		s.Endpoints = []*Endpoint{defaultEndpoint()}
+	}
+	return s.Endpoints[0]
+}
+
 func defaultEndpoint() *Endpoint {
 	return &Endpoint{
 		Name: "/",
@@ -64,18 +65,27 @@ func defaultEndpoint() *Endpoint {
 
 // Start starts HTTP servers for this service.
 func (s *Service) Start() error {
-	s.servers = make([]*httptest.Server, s.Count)
+	s.Instances = make([]*ServiceInstance, s.Count)
 	for i := 0; i < s.Count; i++ {
-		s.servers[i] = httptest.NewServer(s.mux())
-		log.Printf("started service %s[%d] at %s", s.Name, i+1, s.servers[i].URL)
+		instance, err := startServiceInstance(s, fmt.Sprintf("%s-%d", s.Name, i))
+		if err != nil {
+			return err
+		}
+		s.Instances[i] = instance
 	}
 	return nil
 }
 
-func (s *Service) mux() http.Handler {
-	mux := http.NewServeMux()
-	for _, endpoint := range s.Endpoints {
-		mux.Handle(endpoint.Name, endpoint)
+// Stop stops HTTP servers for this service.
+func (s *Service) Stop() {
+	for _, inst := range s.Instances {
+		inst.Stop()
 	}
-	return mux
+}
+
+// NextServerURL returns the URL of one of the servers, in round-robin fashion.
+func (s *Service) NextServerURL() string {
+	next := atomic.AddUint64(&s.nextServer, 1)
+	nextServer := int(next) % len(s.Instances)
+	return s.Instances[nextServer].server.URL
 }
