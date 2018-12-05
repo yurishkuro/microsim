@@ -1,6 +1,11 @@
 package model
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+
+	opentracing "github.com/opentracing/opentracing-go"
+)
 
 // Sequence describes sequential dependencies.
 type Sequence []Dependencies
@@ -10,6 +15,16 @@ func (s Sequence) Validate(r *Registry) error {
 	for i, dep := range s {
 		if err := dep.Validate(r); err != nil {
 			return fmt.Errorf("Sequence[%d]: dependency validation error: %v", i, err)
+		}
+	}
+	return nil
+}
+
+// Call makes calls to all dependencies.
+func (s Sequence) Call(ctx context.Context, tracer opentracing.Tracer) error {
+	for _, dep := range s {
+		if err := dep.Call(ctx, tracer); err != nil {
+			return err
 		}
 	}
 	return nil

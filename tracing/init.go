@@ -18,6 +18,7 @@ func InitTracer(serviceName string) (opentracing.Tracer, io.Closer, error) {
 		},
 		Reporter: &jaegerCfg.ReporterConfig{
 			// LogSpans: true,
+			CollectorEndpoint: "http://localhost:14268/api/traces",
 		},
 	}
 	return cfg.NewTracer(jaegerCfg.Logger(jaeger.StdLogger))

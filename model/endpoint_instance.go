@@ -14,14 +14,18 @@ type EndpointInstance struct {
 }
 
 func (e *EndpointInstance) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	e.execute(r.Context())
+	err := e.execute(r.Context())
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("500 - " + err.Error()))
+	}
 	return
 }
 
 // executes the endpoint, calling dependencies if necessary.
 func (e *EndpointInstance) execute(ctx context.Context) error {
 	if e.Depends != nil {
-		if err := e.Depends.Call(ctx); err != nil {
+		if err := e.Depends.Call(ctx, e.service.tracing.tracer); err != nil {
 			return err
 		}
 	}

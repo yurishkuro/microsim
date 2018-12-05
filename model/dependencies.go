@@ -3,6 +3,8 @@ package model
 import (
 	"context"
 	"fmt"
+
+	opentracing "github.com/opentracing/opentracing-go"
 )
 
 // Dependencies describes dependencies.
@@ -40,7 +42,12 @@ func (d *Dependencies) Validate(r *Registry) error {
 }
 
 // Call makes calls to all dependencies.
-func (d *Dependencies) Call(ctx context.Context) error {
-	// TODO
-	return nil
+func (d *Dependencies) Call(ctx context.Context, tracer opentracing.Tracer) error {
+	if len(d.Seq) > 0 {
+		return d.Seq.Call(ctx, tracer)
+	}
+	if d.Par != nil {
+		return d.Par.Call(ctx, tracer)
+	}
+	return d.Service.Call(ctx, tracer)
 }

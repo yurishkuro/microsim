@@ -1,6 +1,9 @@
 package model
 
-import "context"
+import (
+	"context"
+	"time"
+)
 
 // Perf controls service performance.
 type Perf struct {
@@ -14,5 +17,7 @@ func (p *Perf) Validate(r *Registry) error {
 
 // Apply executes the instructions specified in Perf.
 func (p *Perf) Apply(context.Context) error {
+	// TODO
+	time.Sleep(15 * time.Millisecond)
 	return nil
 }
