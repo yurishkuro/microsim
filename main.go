@@ -3,27 +3,42 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"time"
 
+	"github.com/yurishkuro/microsim/config"
 	"github.com/yurishkuro/microsim/model"
 )
 
-var duration = flag.Int("s", 10, "simulation duration in seconds")
+var simulation = flag.String("s", "", "name of the simulation or path to a JSON config file")
+var printConfig = flag.Bool("o", false, "if present, print the config and exit")
+var duration = flag.Int("d", 10, "simulation duration in seconds")
 var workers = flag.Int("w", 3, "number of workers (tests) to run in parallel")
 var repeats = flag.Int("r", 0, "number of requests (repeats) each worker will send (default - as long as simulation is running)")
 
 func main() {
 	flag.Parse()
 
-	cfg := hotrod
-	out, err := json.Marshal(&cfg)
-	if err != nil {
-		panic(err.Error())
+	if *simulation == "" {
+		fmt.Fprintln(os.Stderr, "ERROR: simulation configuration name is required")
+		flag.Usage()
+		os.Exit(1)
 	}
 
-	os.Stdout.WriteString(string(out) + "\n")
+	cfg, err := config.Get(*simulation)
+	if err != nil {
+		log.Fatalf("cannot load config %s: %v", *simulation, err)
+	}
+
+	// for now always print the config
+	enc := json.NewEncoder(os.Stdout)
+	// enc.SetIndent("", "  ")
+	enc.Encode(cfg)
+	if *printConfig {
+		os.Exit(0)
+	}
 
 	r := &model.Registry{}
 	r.RegisterServices(cfg.Services)

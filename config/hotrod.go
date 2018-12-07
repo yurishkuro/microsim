@@ -1,10 +1,10 @@
-package main
+package config
 
 import (
 	"github.com/yurishkuro/microsim/model"
 )
 
-var hotrod = model.Config{
+var hotrod = &model.Config{
 	Services: []*model.Service{
 		&model.Service{
 			Name: "ui",
