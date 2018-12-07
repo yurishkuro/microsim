@@ -12,8 +12,8 @@ type Sequence []Dependencies
 
 // Validate performs validation and sets defaults.
 func (s Sequence) Validate(r *Registry) error {
-	for i, dep := range s {
-		if err := dep.Validate(r); err != nil {
+	for i := range s {
+		if err := s[i].Validate(r); err != nil {
 			return fmt.Errorf("Sequence[%d]: dependency validation error: %v", i, err)
 		}
 	}

@@ -11,20 +11,8 @@ import (
 	otlog "github.com/opentracing/opentracing-go/log"
 )
 
-// Client is a wrapper around http.Client that can trace the requests.
-type Client struct {
-	client *http.Client
-}
-
-// NewClient creates a new Client.
-func NewClient() *Client {
-	return &Client{
-		client: &http.Client{},
-	}
-}
-
-// Call makes a traced HTTP call.
-func (c *Client) Call(ctx context.Context, url string, tracer opentracing.Tracer) error {
+// Get makes a traced HTTP GET call.
+func Get(ctx context.Context, url string, tracer opentracing.Tracer) error {
 	log.Printf("calling url: %s", url)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -46,7 +34,7 @@ func (c *Client) Call(ctx context.Context, url string, tracer opentracing.Tracer
 	carrier := opentracing.HTTPHeadersCarrier(req.Header)
 	tracer.Inject(span.Context(), opentracing.HTTPHeaders, carrier)
 
-	res, err := c.client.Do(req)
+	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		ottag.Error.Set(span, true)
 		span.LogFields(otlog.Error(err))

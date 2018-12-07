@@ -8,7 +8,6 @@ import (
 
 	"github.com/opentracing-contrib/go-stdlib/nethttp"
 	opentracing "github.com/opentracing/opentracing-go"
-	"github.com/yurishkuro/microsim/client"
 	"github.com/yurishkuro/microsim/tracing"
 )
 
@@ -17,7 +16,6 @@ type ServiceInstance struct {
 	Endpoints []*EndpointInstance
 	service   *Service
 	server    *httptest.Server
-	client    *client.Client
 	tracing   struct {
 		tracer opentracing.Tracer
 		closer io.Closer
@@ -25,13 +23,12 @@ type ServiceInstance struct {
 }
 
 func startServiceInstance(service *Service, instanceName string) (*ServiceInstance, error) {
-	tracer, closer, err := tracing.InitTracer(instanceName)
+	tracer, closer, err := tracing.InitTracer(service.Name, instanceName)
 	if err != nil {
 		return nil, err
 	}
 	inst := &ServiceInstance{
 		service: service,
-		client:  client.NewClient(),
 	}
 	inst.tracing.tracer = tracer
 	inst.tracing.closer = closer
@@ -44,12 +41,13 @@ func (inst *ServiceInstance) mux() http.Handler {
 	mux := http.NewServeMux()
 	inst.Endpoints = make([]*EndpointInstance, len(inst.service.Endpoints))
 	for i, endpoint := range inst.service.Endpoints {
-		inst.Endpoints[i] = endpoint.NewInstance(inst)
+		endpointInstance := endpoint.NewInstance(inst)
+		inst.Endpoints[i] = endpointInstance
 		mw := nethttp.Middleware(
 			inst.tracing.tracer,
-			inst.Endpoints[i],
+			endpointInstance,
 			nethttp.OperationNameFunc(func(r *http.Request) string {
-				return endpoint.Name
+				return endpointInstance.Name
 			}))
 		mux.Handle(endpoint.Name, mw)
 	}

@@ -9,7 +9,7 @@ import (
 )
 
 // InitTracer creates a new tracer for a service.
-func InitTracer(serviceName string) (opentracing.Tracer, io.Closer, error) {
+func InitTracer(serviceName, instanceName string) (opentracing.Tracer, io.Closer, error) {
 	cfg := &jaegerCfg.Configuration{
 		ServiceName: serviceName,
 		Sampler: &jaegerCfg.SamplerConfig{
@@ -19,6 +19,9 @@ func InitTracer(serviceName string) (opentracing.Tracer, io.Closer, error) {
 		Reporter: &jaegerCfg.ReporterConfig{
 			// LogSpans: true,
 			CollectorEndpoint: "http://localhost:14268/api/traces",
+		},
+		Tags: []opentracing.Tag{
+			{Key: "service-instance", Value: instanceName},
 		},
 	}
 	return cfg.NewTracer(jaegerCfg.Logger(jaeger.StdLogger))

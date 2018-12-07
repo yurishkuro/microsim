@@ -2,9 +2,11 @@ package model
 
 import (
 	"context"
+	"log"
 	"net/http"
 
 	opentracing "github.com/opentracing/opentracing-go"
+	"github.com/yurishkuro/microsim/client"
 )
 
 // EndpointInstance implements an endpoint in a single instance of a service.
@@ -14,10 +16,10 @@ type EndpointInstance struct {
 }
 
 func (e *EndpointInstance) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	log.Printf("%s/%s handling request", e.Endpoint.service.Name, e.Endpoint.Name)
 	err := e.execute(r.Context())
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("500 - " + err.Error()))
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	return
 }
@@ -35,5 +37,5 @@ func (e *EndpointInstance) execute(ctx context.Context) error {
 // Call makes a call to this endpoint.
 func (e *EndpointInstance) Call(ctx context.Context, tracer opentracing.Tracer) error {
 	url := e.service.server.URL + e.Name
-	return e.service.client.Call(ctx, url, tracer)
+	return client.Get(ctx, url, tracer)
 }

@@ -17,6 +17,7 @@ type Config struct {
 
 	TestDuration time.Duration
 	TestRunners  int
+	Repeats      int
 }
 
 // Validate performs validation and sets defaults.
@@ -59,27 +60,38 @@ func (c *Config) Run() {
 		go c.runWorker(name, stop, done)
 	}
 	log.Printf("started %d test executors", c.TestRunners)
-	log.Printf("running for %v", c.TestDuration)
-	time.Sleep(c.TestDuration)
-	log.Printf("stopping test executors")
-	close(stop)
+	if c.Repeats > 0 {
+		log.Printf("running %d repeat(s)", c.Repeats)
+	} else {
+		log.Printf("running for %v", c.TestDuration)
+		time.Sleep(c.TestDuration)
+		log.Printf("stopping test executors")
+		close(stop)
+	}
 	log.Printf("waiting for test executors to exit")
 	done.Wait()
 }
 
-func (c *Config) runWorker(name string, stop chan struct{}, done *sync.WaitGroup) {
-	tracer, closer, err := tracing.InitTracer(name)
+func (c *Config) runWorker(instanceName string, stop chan struct{}, done *sync.WaitGroup) {
+	tracer, closer, err := tracing.InitTracer("test-executor", instanceName)
 	if err != nil {
 		log.Fatalf("failed to create a tracer: %v", err)
 	}
 	defer closer.Close()
 	defer done.Done()
+	repeats := c.Repeats
 	for {
 		select {
 		case <-stop:
 			return
 		default:
 			c.runTest(tracer)
+		}
+		if repeats > 0 {
+			repeats--
+			if repeats == 0 {
+				break
+			}
 		}
 	}
 }

@@ -10,8 +10,9 @@ import (
 	"github.com/yurishkuro/microsim/model"
 )
 
-var duration = flag.Int("d", 10, "duration in seconds")
+var duration = flag.Int("s", 10, "simulation duration in seconds")
 var workers = flag.Int("w", 3, "number of workers (tests) to run in parallel")
+var repeats = flag.Int("r", 0, "number of requests (repeats) each worker will send (default - as long as simulation is running)")
 
 func main() {
 	flag.Parse()
@@ -40,6 +41,7 @@ func main() {
 
 	cfg.TestDuration = time.Duration(*duration) * time.Second
 	cfg.TestRunners = *workers
+	cfg.Repeats = *repeats
 	cfg.Run()
 
 	cfg.Stop()
