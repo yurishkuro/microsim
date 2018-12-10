@@ -98,7 +98,7 @@ func (c *Config) runWorker(instanceName string, stop chan struct{}, done *sync.W
 
 func (c *Config) runTest(tracer opentracing.Tracer) {
 	rootSvc := c.Services[0]
-	inst := rootSvc.Instances[0]
+	inst := rootSvc.instances[0]
 	endpoint := inst.Endpoints[0]
 	err := endpoint.Call(context.Background(), tracer)
 	if err != nil {

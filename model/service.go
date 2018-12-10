@@ -11,7 +11,7 @@ type Service struct {
 	Endpoints []*Endpoint `json:",omitempty"`
 	Count     int         `json:",omitempty"`
 
-	Instances  []*ServiceInstance
+	instances  []*ServiceInstance
 	nextServer uint64
 }
 
@@ -30,6 +30,7 @@ func (s *Service) Validate(r *Registry) error {
 		s.Endpoints = []*Endpoint{defaultEndpoint()}
 	}
 	for i, endpoint := range s.Endpoints {
+		println("validating endpoint" + endpoint.Name)
 		if err := endpoint.Validate(s, r); err != nil {
 			return fmt.Errorf("%s: endpoint[%d] validation error: %v", s.Name, i, err)
 		}
@@ -65,20 +66,20 @@ func defaultEndpoint() *Endpoint {
 
 // Start starts HTTP servers for this service.
 func (s *Service) Start() error {
-	s.Instances = make([]*ServiceInstance, s.Count)
+	s.instances = make([]*ServiceInstance, s.Count)
 	for i := 0; i < s.Count; i++ {
 		instance, err := startServiceInstance(s, fmt.Sprintf("%s-%d", s.Name, i))
 		if err != nil {
 			return err
 		}
-		s.Instances[i] = instance
+		s.instances[i] = instance
 	}
 	return nil
 }
 
 // Stop stops HTTP servers for this service.
 func (s *Service) Stop() {
-	for _, inst := range s.Instances {
+	for _, inst := range s.instances {
 		inst.Stop()
 	}
 }
@@ -86,6 +87,6 @@ func (s *Service) Stop() {
 // NextServerURL returns the URL of one of the servers, in round-robin fashion.
 func (s *Service) NextServerURL() string {
 	next := atomic.AddUint64(&s.nextServer, 1)
-	nextServer := int(next) % len(s.Instances)
-	return s.Instances[nextServer].server.URL
+	nextServer := int(next) % len(s.instances)
+	return s.instances[nextServer].server.URL
 }

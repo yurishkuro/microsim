@@ -12,8 +12,9 @@ import (
 	"github.com/yurishkuro/microsim/model"
 )
 
-var simulation = flag.String("s", "", "name of the simulation or path to a JSON config file")
+var simulation = flag.String("c", "", "name of the simulation config or path to a JSON config file")
 var printConfig = flag.Bool("o", false, "if present, print the config and exit")
+var printValidated = flag.Bool("O", false, "if present, print the config with defaults and exit")
 var duration = flag.Int("d", 10, "simulation duration in seconds")
 var workers = flag.Int("w", 3, "number of workers (tests) to run in parallel")
 var repeats = flag.Int("r", 0, "number of requests (repeats) each worker will send (default - as long as simulation is running)")
@@ -45,6 +46,13 @@ func main() {
 
 	if err := cfg.Validate(r); err != nil {
 		log.Fatalf("validation failed: %v", err)
+	}
+
+	if *printValidated {
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", "  ")
+		enc.Encode(cfg)
+		os.Exit(0)
 	}
 
 	if err := cfg.Start(); err != nil {

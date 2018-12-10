@@ -19,10 +19,11 @@ func (e *Endpoint) Validate(s *Service, r *Registry) error {
 	if e.Name == "" {
 		return fmt.Errorf("service name required")
 	}
-	if e.Perf != nil {
-		if err := e.Perf.Validate(r); err != nil {
-			return fmt.Errorf("%s: perf validation error: %v", e.Name, err)
-		}
+	if e.Perf == nil {
+		e.Perf = &Perf{}
+	}
+	if err := e.Perf.Validate(r); err != nil {
+		return fmt.Errorf("%s: perf validation error: %v", e.Name, err)
 	}
 	if e.Depends != nil {
 		if err := e.Depends.Validate(r); err != nil {
