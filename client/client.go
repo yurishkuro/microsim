@@ -3,7 +3,6 @@ package client
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 
 	opentracing "github.com/opentracing/opentracing-go"
@@ -13,7 +12,6 @@ import (
 
 // Get makes a traced HTTP GET call.
 func Get(ctx context.Context, url string, tracer opentracing.Tracer) error {
-	log.Printf("calling url: %s", url)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return err
@@ -43,7 +41,6 @@ func Get(ctx context.Context, url string, tracer opentracing.Tracer) error {
 
 	res.Body.Close()
 	ottag.HTTPStatusCode.Set(span, uint16(res.StatusCode))
-	log.Printf("status code: %d", res.StatusCode)
 	if res.StatusCode != 200 {
 		return fmt.Errorf("%s returned status code %d", url, res.StatusCode)
 	}

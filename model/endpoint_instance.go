@@ -2,7 +2,6 @@ package model
 
 import (
 	"context"
-	"log"
 	"net/http"
 
 	opentracing "github.com/opentracing/opentracing-go"
@@ -16,7 +15,6 @@ type EndpointInstance struct {
 }
 
 func (e *EndpointInstance) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Printf("%s/%s handling request", e.Endpoint.service.Name, e.Endpoint.Name)
 	err := e.execute(r.Context())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
