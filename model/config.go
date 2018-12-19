@@ -17,7 +17,9 @@ type Config struct {
 
 	TestDuration time.Duration
 	TestRunners  int
-	Repeats      int
+
+	Repeats              int
+	SleepBetweenRequests time.Duration
 }
 
 // Validate performs validation and sets defaults.
@@ -103,5 +105,8 @@ func (c *Config) runTest(tracer opentracing.Tracer) {
 	err := endpoint.Call(context.Background(), tracer)
 	if err != nil {
 		log.Printf("transaction failed: %v", err)
+	}
+	if c.SleepBetweenRequests != 0 {
+		time.Sleep(c.SleepBetweenRequests)
 	}
 }

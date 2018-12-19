@@ -15,9 +15,10 @@ import (
 var simulation = flag.String("c", "hotrod", "name of the simulation config or path to a JSON config file")
 var printConfig = flag.Bool("o", false, "if present, print the config and exit")
 var printValidated = flag.Bool("O", false, "if present, print the config with defaults and exit")
-var duration = flag.Int("d", 10, "simulation duration in seconds")
+var duration = flag.Duration("d", 10*time.Second, "simulation duration")
 var workers = flag.Int("w", 3, "number of workers (tests) to run in parallel")
 var repeats = flag.Int("r", 0, "number of requests (repeats) each worker will send (default - as long as simulation is running)")
+var sleep = flag.Duration("s", 100*time.Millisecond, "how long each worker sleeps between requests, as a way of controlling QPS")
 
 func main() {
 	flag.Parse()
@@ -62,9 +63,10 @@ func main() {
 	log.Printf("services started")
 	time.Sleep(3 * time.Second)
 
-	cfg.TestDuration = time.Duration(*duration) * time.Second
+	cfg.TestDuration = *duration
 	cfg.TestRunners = *workers
 	cfg.Repeats = *repeats
+	cfg.SleepBetweenRequests = *sleep
 	cfg.Run()
 
 	cfg.Stop()
