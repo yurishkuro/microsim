@@ -3,39 +3,42 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:c46fd324e7902268373e1b337436a6377c196e2dbd7b35624c6256d29d494e78"
   name = "github.com/codahale/hdrhistogram"
   packages = ["."]
+  pruneopts = ""
   revision = "3a0bb77429bd3a61596f5e8a3172445844342120"
 
 [[projects]]
-  name = "github.com/golang/protobuf"
-  packages = ["proto"]
-  revision = "aa810b61a9c79d51363740d207bb46cf8e620ed5"
-  version = "v1.2.0"
-
-[[projects]]
   branch = "master"
+  digest = "1:0325310ccdac635bc295a3dfa44b27c9486835d13b8049517f89adc8eb697c5e"
   name = "github.com/opentracing-contrib/go-stdlib"
   packages = ["nethttp"]
-  revision = "c9628a4f0148d7e441a4af66dc0b1653cd941c20"
+  pruneopts = ""
+  revision = "09659152d0aa5b83bb7683a9c33c79f8ee57038c"
 
 [[projects]]
+  digest = "1:78fb99d6011c2ae6c72f3293a83951311147b12b06a5ffa43abf750c4fab6ac5"
   name = "github.com/opentracing/opentracing-go"
   packages = [
     ".",
     "ext",
-    "log"
+    "log",
   ]
+  pruneopts = ""
   revision = "1949ddbfd147afd4d964a9f00b24eb291e0e7c38"
   version = "v1.0.2"
 
 [[projects]]
+  digest = "1:7365acd48986e205ccb8652cc746f09c8b7876030d53710ea6ef7d0bd0dcd7ca"
   name = "github.com/pkg/errors"
   packages = ["."]
+  pruneopts = ""
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
   version = "v0.8.0"
 
 [[projects]]
+  digest = "1:941ab4973b3218a9a6d02d31734f5c762239eb538c0d702fff62d4037af8ab0a"
   name = "github.com/uber/jaeger-client-go"
   packages = [
     ".",
@@ -54,26 +57,38 @@
     "thrift-gen/sampling",
     "thrift-gen/zipkincore",
     "transport",
-    "utils"
+    "utils",
   ]
+  pruneopts = ""
   revision = "1a782e2da844727691fef1757c72eb190c2909f0"
   version = "v2.15.0"
 
 [[projects]]
+  digest = "1:aa1598d34009b45ce74fdabdd25e4258d7923d1e1b418d4c98482e79607cb9b0"
   name = "github.com/uber/jaeger-lib"
   packages = ["metrics"]
+  pruneopts = ""
   revision = "ed3a127ec5fef7ae9ea95b01b542c47fbd999ce5"
   version = "v1.5.0"
 
 [[projects]]
   branch = "master"
+  digest = "1:3b4532388bb9dfcc98530527160974cf5ec03120002887777516a98092725ba0"
   name = "golang.org/x/net"
   packages = ["context"]
-  revision = "351d144fa1fc0bd934e2408202be0c29f25e35a0"
+  pruneopts = ""
+  revision = "e147a9138326bc0e9d4e179541ffd8af41cff8a9"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "8d5fd9f47aaf6d044cef1b41ce4d1982d70ae4744b299a34ae09913c5f29afc2"
+  input-imports = [
+    "github.com/opentracing-contrib/go-stdlib/nethttp",
+    "github.com/opentracing/opentracing-go",
+    "github.com/opentracing/opentracing-go/ext",
+    "github.com/opentracing/opentracing-go/log",
+    "github.com/uber/jaeger-client-go",
+    "github.com/uber/jaeger-client-go/config",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
