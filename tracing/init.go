@@ -8,6 +8,9 @@ import (
 	jaegerCfg "github.com/uber/jaeger-client-go/config"
 )
 
+// JaegerCollectorURL defines the address of Jaeger collector to submit spans.
+var JaegerCollectorURL = "http://localhost:14268/api/traces"
+
 // InitTracer creates a new tracer for a service.
 func InitTracer(serviceName, instanceName string) (opentracing.Tracer, io.Closer, error) {
 	cfg := &jaegerCfg.Configuration{
@@ -18,7 +21,7 @@ func InitTracer(serviceName, instanceName string) (opentracing.Tracer, io.Closer
 		},
 		Reporter: &jaegerCfg.ReporterConfig{
 			// LogSpans: true,
-			CollectorEndpoint: "http://localhost:14268/api/traces",
+			CollectorEndpoint: JaegerCollectorURL,
 		},
 		Tags: []opentracing.Tag{
 			{Key: "service-instance", Value: instanceName},
