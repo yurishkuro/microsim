@@ -65,6 +65,7 @@ func main() {
 	log.Printf("services started")
 	time.Sleep(3 * time.Second)
 
+	cfg.TestName = *simulation
 	cfg.TestDuration = *duration
 	cfg.TestRunners = *workers
 	cfg.Repeats = *repeats

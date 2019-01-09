@@ -15,6 +15,7 @@ import (
 type Config struct {
 	Services []*Service
 
+	TestName     string
 	TestDuration time.Duration
 	TestRunners  int
 
@@ -102,7 +103,13 @@ func (c *Config) runTest(tracer opentracing.Tracer) {
 	rootSvc := c.Services[0]
 	inst := rootSvc.instances[0]
 	endpoint := inst.Endpoints[0]
-	err := endpoint.Call(context.Background(), tracer)
+
+	rootSpan := tracer.StartSpan("runTest")
+	rootSpan.SetTag("test_name", c.TestName)
+	defer rootSpan.Finish()
+	ctx := opentracing.ContextWithSpan(context.Background(), rootSpan)
+
+	err := endpoint.Call(ctx, tracer)
 	if err != nil {
 		log.Printf("transaction failed: %v", err)
 	}
