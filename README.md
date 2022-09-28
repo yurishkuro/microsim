@@ -25,9 +25,9 @@ The tool comes with a built-in configuration for Jaeger's HotROD application tha
 docker run yurishkuro/microsim -o | jq
 ```
 
-The schema for the config is hardcoded in the data model: [model/config.go](./model/config.go).
-
-The UML diagram below is generated with https://www.dumels.com/.
+* A custom configuration can be provided via `-c` option.
+* The schema for the config is hardcoded in the data model: [model/config.go](./model/config.go).
+* The UML diagram below is generated with https://www.dumels.com/.
 
 ![UML diagram of configuration](model/uml-diagram.png)
 
