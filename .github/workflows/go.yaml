@@ -1,0 +1,90 @@
+name: Go
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: ['**']
+
+env:
+  golang-version: 1.18.4
+  golangci-lint-version: v1.46.2
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v3
+
+    - name: Set up Go ${{ env.golang-version }}
+      uses: actions/setup-go@v3.2.1
+      with:
+        go-version: ${{ env.golang-version }}
+
+    - name: Use Go module caching
+      uses: actions/cache@v3
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Build
+      run: go build
+
+  test:
+    name: unit
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v3
+
+    - name: Set up Go ${{ env.golang-version }}
+      uses: actions/setup-go@v3.2.1
+      with:
+        go-version: ${{ env.golang-version }}
+      id: go
+
+    - name: Use Go module caching
+      uses: actions/cache@v3
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Test
+      run: go test ./...
+
+  lint:
+    name: Lint and format
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v3
+
+    - name: Set up Go ${{ env.golang-version }}
+      uses: actions/setup-go@v3.2.1
+      with:
+        go-version: ${{ env.golang-version }}
+      id: go
+
+    - name: Use Go module caching
+      uses: actions/cache@v3
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Lint
+      uses: golangci/golangci-lint-action@v3
+      with:
+        version: ${{ env.golangci-lint-version }}
+
+    - name: Format
+      run: |
+        go fmt ./...
+        git diff --exit-code .
