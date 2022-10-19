@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/yurishkuro/microsim/client"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // ServiceDep describes dependency on a specific service, and optionally endpoint.
@@ -37,7 +37,7 @@ func (s *ServiceDep) Validate(r *Registry) error {
 }
 
 // Call makes call to dependency service.
-func (s *ServiceDep) Call(ctx context.Context, tracer opentracing.Tracer) error {
+func (s *ServiceDep) Call(ctx context.Context, tracer trace.Tracer) error {
 	url := s.service.NextServerURL() + s.endpoint.Name
 	return client.Get(ctx, url, tracer)
 }

@@ -4,8 +4,8 @@ import (
 	"context"
 	"net/http"
 
-	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/yurishkuro/microsim/client"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // EndpointInstance implements an endpoint in a single instance of a service.
@@ -33,7 +33,7 @@ func (e *EndpointInstance) execute(ctx context.Context) error {
 }
 
 // Call makes a call to this endpoint.
-func (e *EndpointInstance) Call(ctx context.Context, tracer opentracing.Tracer) error {
+func (e *EndpointInstance) Call(ctx context.Context, tracer trace.Tracer) error {
 	url := e.service.server.URL + e.Name
 	return client.Get(ctx, url, tracer)
 }

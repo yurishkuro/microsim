@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	opentracing "github.com/opentracing/opentracing-go"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // Dependencies describes dependencies.
@@ -42,7 +42,7 @@ func (d *Dependencies) Validate(r *Registry) error {
 }
 
 // Call makes calls to all dependencies.
-func (d *Dependencies) Call(ctx context.Context, tracer opentracing.Tracer) error {
+func (d *Dependencies) Call(ctx context.Context, tracer trace.Tracer) error {
 	if len(d.Seq) > 0 {
 		return d.Seq.Call(ctx, tracer)
 	}
