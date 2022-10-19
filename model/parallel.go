@@ -6,7 +6,7 @@ import (
 	"log"
 	"sync"
 
-	opentracing "github.com/opentracing/opentracing-go"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // Parallel describes parallel dependencies.
@@ -32,14 +32,14 @@ func (p *Parallel) Validate(r *Registry) error {
 }
 
 // Call makes calls to all dependencies.
-func (p *Parallel) Call(ctx context.Context, tracer opentracing.Tracer) error {
+func (p *Parallel) Call(ctx context.Context, tracer trace.Tracer) error {
 	if p.MaxPar == 0 {
 		return p.fullParCall(ctx, tracer)
 	}
 	return p.maxParCall(ctx, tracer)
 }
 
-func (p *Parallel) fullParCall(ctx context.Context, tracer opentracing.Tracer) error {
+func (p *Parallel) fullParCall(ctx context.Context, tracer trace.Tracer) error {
 	// done := &sync.WaitGroup{}
 	// done.Add(len(p.Items))
 
@@ -54,7 +54,7 @@ func (p *Parallel) fullParCall(ctx context.Context, tracer opentracing.Tracer) e
 	return nil
 }
 
-func (p *Parallel) maxParCall(ctx context.Context, tracer opentracing.Tracer) error {
+func (p *Parallel) maxParCall(ctx context.Context, tracer trace.Tracer) error {
 	done := &sync.WaitGroup{}
 	done.Add(len(p.Items))
 

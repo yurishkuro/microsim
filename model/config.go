@@ -7,8 +7,11 @@ import (
 	"sync"
 	"time"
 
-	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/yurishkuro/microsim/tracing"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/propagation"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // Config is config.
@@ -38,6 +41,14 @@ func (c *Config) Validate(r *Registry) error {
 
 // Start starts the simulation.
 func (c *Config) Start() error {
+
+	otel.SetTextMapPropagator(
+		propagation.NewCompositeTextMapPropagator(
+			propagation.TraceContext{},
+			propagation.Baggage{},
+		),
+	)
+
 	for i, service := range c.Services {
 		if err := service.Start(); err != nil {
 			return fmt.Errorf("Start to fail service %d - %s: %v", i, service.Name, err)
@@ -76,11 +87,11 @@ func (c *Config) Run() {
 }
 
 func (c *Config) runWorker(instanceName string, stop chan struct{}, done *sync.WaitGroup) {
-	tracer, closer, err := tracing.InitTracer("test-executor", instanceName)
+	tracer, shutdown, err := tracing.InitTracer("test-executor", instanceName)
 	if err != nil {
 		log.Fatalf("failed to create a tracer: %v", err)
 	}
-	defer closer.Close()
+	defer shutdown()
 	defer done.Done()
 	repeats := c.Repeats
 	for {
@@ -99,15 +110,17 @@ func (c *Config) runWorker(instanceName string, stop chan struct{}, done *sync.W
 	}
 }
 
-func (c *Config) runTest(tracer opentracing.Tracer) {
+func (c *Config) runTest(tracer trace.Tracer) {
 	rootSvc := c.Services[0]
 	inst := rootSvc.instances[0]
 	endpoint := inst.Endpoints[0]
 
-	rootSpan := tracer.StartSpan("runTest")
-	rootSpan.SetTag("test_name", c.TestName)
-	defer rootSpan.Finish()
-	ctx := opentracing.ContextWithSpan(context.Background(), rootSpan)
+	ctx, rootSpan := tracer.Start(
+		context.Background(),
+		"runTest",
+		trace.WithAttributes(attribute.String("test_name", c.TestName)),
+	)
+	defer rootSpan.End()
 
 	err := endpoint.Call(ctx, tracer)
 	if err != nil {
