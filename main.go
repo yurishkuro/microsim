@@ -39,13 +39,13 @@ func main() {
 	// for now always print the config
 	enc := json.NewEncoder(os.Stdout)
 	// enc.SetIndent("", "  ")
-	enc.Encode(cfg)
+	_ = enc.Encode(cfg)
 	if *printConfig {
 		os.Exit(0)
 	}
 
 	r := &model.Registry{}
-	r.RegisterServices(cfg.Services)
+	_ = r.RegisterServices(cfg.Services)
 
 	if err := cfg.Validate(r); err != nil {
 		log.Fatalf("validation failed: %v", err)
@@ -54,7 +54,7 @@ func main() {
 	if *printValidated {
 		enc := json.NewEncoder(os.Stdout)
 		enc.SetIndent("", "  ")
-		enc.Encode(cfg)
+		_ = enc.Encode(cfg)
 		os.Exit(0)
 	}
 

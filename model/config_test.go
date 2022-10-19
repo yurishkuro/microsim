@@ -22,7 +22,7 @@ var oneService = &model.Config{
 func TestDefaults(t *testing.T) {
 	cfg := oneService
 	r := &model.Registry{}
-	r.RegisterServices(cfg.Services)
+	_ = r.RegisterServices(cfg.Services)
 
 	if err := cfg.Validate(r); err != nil {
 		t.Fatalf("validation failed: %v", err)
