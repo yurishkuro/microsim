@@ -32,7 +32,7 @@ jobs:
 
     - name: Docker Upload
       run: |
-        docker push yurishkuro/microsim:${{  github.ref_name }}
+        docker push yurishkuro/microsim:${VERSION}
 
     - name: SBOM Generation
       uses: anchore/sbom-action@b7e8507c6a3c89b7099a0198366d862c8f3ad8f1
