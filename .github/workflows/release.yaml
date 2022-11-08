@@ -16,9 +16,15 @@ jobs:
     - name: Fetch git tags
       run: git fetch --prune --unshallow --tags
 
+    - name: Get release version
+      run: |
+        VERSION=`echo "${{  github.ref_name }}" | sed 's/v\(.*\)/\1/' `
+        echo "VERSION=${VERSION}"
+        echo "VERSION=${VERSION}" >> ${GITHUB_ENV}
+
     - name: Docker Build
       run: |
-        docker build -t yurishkuro/microsim:${{  github.ref_name }} .
+        docker build -t yurishkuro/microsim:${VERSION} .
 
     - name: Docker Login
       run: |
