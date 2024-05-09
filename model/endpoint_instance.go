@@ -6,6 +6,7 @@ import (
 
 	"github.com/yurishkuro/microsim/client"
 	"go.opentelemetry.io/otel/trace"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 // EndpointInstance implements an endpoint in a single instance of a service.
@@ -17,6 +18,7 @@ type EndpointInstance struct {
 func (e *EndpointInstance) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	err := e.execute(r.Context())
 	if err != nil {
+		trace.SpanFromContext(r.Context()).SetAttributes(attribute.String("Error Message", err.Error()))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
