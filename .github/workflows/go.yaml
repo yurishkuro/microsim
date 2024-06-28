@@ -29,10 +29,11 @@ jobs:
     - name: Test
       run: go test ./...
 
-    - name: Lint
-      uses: golangci/golangci-lint-action@v3
-      with:
-        version: ${{ env.golangci-lint-version }}
+# Disable lint step temporarily. Need to migrate it to tools/go.mod
+#    - name: Lint
+#      uses: golangci/golangci-lint-action@v3
+#      with:
+#        version: ${{ env.golangci-lint-version }}
 
     - name: Format
       run: |
