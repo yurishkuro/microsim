@@ -35,6 +35,6 @@ jobs:
         docker push yurishkuro/microsim:${VERSION}
 
     - name: SBOM Generation
-      uses: anchore/sbom-action@b7e8507c6a3c89b7099a0198366d862c8f3ad8f1
+      uses: anchore/sbom-action@v0.16.0
       with:
         artifact-name: microsim-SBOM.spdx.json
