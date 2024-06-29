@@ -111,6 +111,12 @@ var hotrod = &model.Config{
 				},
 				{
 					Name: "/GetDriver",
+					Perf: &model.Perf{
+						Failure: &model.Failure{
+							Probability: 0.3,
+							Messages:    []string{"redis timeout", "redis error"},
+						},
+					},
 				},
 			},
 		},
