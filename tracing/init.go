@@ -19,7 +19,6 @@ var JaegerCollectorURL = "http://localhost:14268/api/traces"
 
 // InitTracer creates a new tracer for a service.
 func InitTracer(serviceName, instanceName string) (trace.Tracer, func(), error) {
-
 	tp, err := newTracerProvider(serviceName, instanceName)
 	if err != nil {
 		return nil, nil, fmt.Errorf("couldn't initialize tracer provider: %w", err)
