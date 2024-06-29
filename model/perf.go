@@ -2,16 +2,16 @@ package model
 
 import (
 	"context"
+	"fmt"
 	"math"
 	"math/rand"
 	"time"
-	"fmt"
 )
 
 // Perf controls service performance.
 type Perf struct {
-	Latency     *Latency
-	Failure		*Failure
+	Latency *Latency
+	Failure *Failure
 }
 
 // Latency contains parameters for simulating latency
@@ -22,7 +22,7 @@ type Latency struct {
 // Failure contains parameters for simulating failures
 type Failure struct {
 	Probability float64
-	Messages   []string
+	Messages    []string
 }
 
 var defaultLatency = Latency{Mean: 15 * time.Millisecond, StdDev: 3 * time.Millisecond}
@@ -33,7 +33,12 @@ func (p *Perf) Validate(r *Registry) error {
 		p.Latency = &defaultLatency
 	}
 	if p.Failure == nil {
-		p.Failure = &Failure{Probability: 0}
+		p.Failure = &Failure{
+			Probability: 0,
+			Messages:    []string{"simulated failure"},
+		}
+	} else if len(p.Failure.Messages) == 0 {
+		p.Failure.Messages = []string{"simulated failure"}
 	}
 	return nil
 }

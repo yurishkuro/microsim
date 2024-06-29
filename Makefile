@@ -10,7 +10,8 @@ DOCKER_TAG?=latest
 # SRC_ROOT is the top of the source tree.
 SRC_ROOT := $(shell git rev-parse --show-toplevel)
 
-GO := go
+GO=go
+GOFMT=gofmt
 
 # All .go files that are not auto-generated and should be auto-formatted and linted.
 ALL_SRC = $(shell find . -name '*.go' \
