@@ -41,7 +41,6 @@ func (c *Config) Validate(r *Registry) error {
 
 // Start starts the simulation.
 func (c *Config) Start() error {
-
 	otel.SetTextMapPropagator(
 		propagation.NewCompositeTextMapPropagator(
 			propagation.TraceContext{},

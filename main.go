@@ -13,13 +13,15 @@ import (
 	"github.com/yurishkuro/microsim/tracing"
 )
 
-var simulation = flag.String("c", "hotrod", "name of the simulation config or path to a JSON config file")
-var printConfig = flag.Bool("o", false, "if present, print the config and exit")
-var printValidated = flag.Bool("O", false, "if present, print the config with defaults and exit")
-var duration = flag.Duration("d", 10*time.Second, "simulation duration")
-var workers = flag.Int("w", 3, "number of workers (tests) to run in parallel")
-var repeats = flag.Int("r", 0, "number of requests (repeats) each worker will send (default 0, i.e. as long as simulation is running)")
-var sleep = flag.Duration("s", 100*time.Millisecond, "how long each worker sleeps between requests, as a way of controlling QPS")
+var (
+	simulation     = flag.String("c", "hotrod", "name of the simulation config or path to a JSON config file")
+	printConfig    = flag.Bool("o", false, "if present, print the config and exit")
+	printValidated = flag.Bool("O", false, "if present, print the config with defaults and exit")
+	duration       = flag.Duration("d", 10*time.Second, "simulation duration")
+	workers        = flag.Int("w", 3, "number of workers (tests) to run in parallel")
+	repeats        = flag.Int("r", 0, "number of requests (repeats) each worker will send (default 0, i.e. as long as simulation is running)")
+	sleep          = flag.Duration("s", 100*time.Millisecond, "how long each worker sleeps between requests, as a way of controlling QPS")
+)
 
 func main() {
 	flag.StringVar(&tracing.JaegerCollectorURL, "j", tracing.JaegerCollectorURL, "address of Jaeger collector to submit spans")
