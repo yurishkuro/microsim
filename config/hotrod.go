@@ -6,10 +6,10 @@ import (
 
 var hotrod = &model.Config{
 	Services: []*model.Service{
-		&model.Service{
+		{
 			Name: "ui",
 			Endpoints: []*model.Endpoint{
-				&model.Endpoint{
+				{
 					Name: "/",
 					Depends: &model.Dependencies{
 						Service: &model.ServiceDep{
@@ -20,10 +20,10 @@ var hotrod = &model.Config{
 				},
 			},
 		},
-		&model.Service{
+		{
 			Name: "frontend",
 			Endpoints: []*model.Endpoint{
-				&model.Endpoint{
+				{
 					Name: "/dispatch",
 					Depends: &model.Dependencies{
 						Seq: model.Sequence{
@@ -49,10 +49,10 @@ var hotrod = &model.Config{
 				},
 			},
 		},
-		&model.Service{
+		{
 			Name: "customer",
 			Endpoints: []*model.Endpoint{
-				&model.Endpoint{
+				{
 					Name: "/customer",
 					Depends: &model.Dependencies{
 						Seq: model.Sequence{
@@ -62,10 +62,10 @@ var hotrod = &model.Config{
 				},
 			},
 		},
-		&model.Service{
+		{
 			Name: "driver",
 			Endpoints: []*model.Endpoint{
-				&model.Endpoint{
+				{
 					Name: "/FindNearest",
 					Depends: &model.Dependencies{
 						Seq: model.Sequence{
@@ -86,31 +86,37 @@ var hotrod = &model.Config{
 			},
 			Count: 2,
 		},
-		&model.Service{
+		{
 			Name:  "route",
 			Count: 3,
 			Endpoints: []*model.Endpoint{
-				&model.Endpoint{
+				{
 					Name: "/GetShortestRoute",
 				},
 			},
 		},
-		&model.Service{
+		{
 			Name: "mysql",
 			Endpoints: []*model.Endpoint{
-				&model.Endpoint{
+				{
 					Name: "/sql_select",
 				},
 			},
 		},
-		&model.Service{
+		{
 			Name: "redis",
 			Endpoints: []*model.Endpoint{
-				&model.Endpoint{
+				{
 					Name: "/FindDriverIDs",
 				},
-				&model.Endpoint{
+				{
 					Name: "/GetDriver",
+					Perf: &model.Perf{
+						Failure: &model.Failure{
+							Probability: 0.3,
+							Messages:    []string{"redis timeout", "redis error"},
+						},
+					},
 				},
 			},
 		},

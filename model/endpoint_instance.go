@@ -17,6 +17,8 @@ type EndpointInstance struct {
 func (e *EndpointInstance) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	err := e.execute(r.Context())
 	if err != nil {
+		span := trace.SpanFromContext(r.Context())
+		span.RecordError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
