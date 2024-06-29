@@ -30,7 +30,7 @@ jobs:
       run: go test ./...
 
     - name: Install tools
-      run: go build .
+      run: make install-ci
 
     - name: Lint
       run: make lint
