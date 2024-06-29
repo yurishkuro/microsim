@@ -29,13 +29,11 @@ jobs:
     - name: Test
       run: go test ./...
 
-# Disable lint step temporarily. Need to migrate it to tools/go.mod
-#    - name: Lint
-#      uses: golangci/golangci-lint-action@v3
-#      with:
-#        version: ${{ env.golangci-lint-version }}
+    - name: Install tools
+      run: go build .
+
+    - name: Lint
+      run: make lint
 
     - name: Check Format
-      run: |
-        make fmt
-        git diff --exit-code .
+      run: make fmt && git diff --exit-code .
