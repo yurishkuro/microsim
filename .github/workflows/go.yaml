@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-env:
-  golangci-lint-version: v1.46.2
-
 jobs:
   build:
     name: Build, test and lint
