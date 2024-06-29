@@ -31,7 +31,7 @@ jobs:
       id: docker_meta
       uses: docker/metadata-action@v5
       with:
-        images: jaegertracing/protobuf
+        images: yurishkuro/microsim
         # The 'tags:' section defines how the Docker image will be tagged:
         #   - pushes to main branch will be published as 'latest'
         #   - pushes tagged with semver will be published as that version (without 'v')
