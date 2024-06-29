@@ -8,6 +8,7 @@ import (
 	"github.com/yurishkuro/microsim/tracing"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel/trace"
+	"go.opentelemetry.io/otel/trace/embedded"
 )
 
 // ServiceInstance represents a single instance of a service.
@@ -63,6 +64,7 @@ func (inst *ServiceInstance) Stop() {
 }
 
 type singletonTracerProvider struct {
+	embedded.TracerProvider
 	tracer trace.Tracer
 }
 
@@ -71,5 +73,5 @@ func (p *singletonTracerProvider) Tracer(_ string, _ ...trace.TracerOption) trac
 }
 
 func newSingletonTracerProvider(tracer trace.Tracer) trace.TracerProvider {
-	return &singletonTracerProvider{tracer}
+	return &singletonTracerProvider{tracer: tracer}
 }

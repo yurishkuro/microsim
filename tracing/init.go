@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/exporters/jaeger"
+	otel "go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/sdk/resource"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.12.0"
@@ -19,7 +19,6 @@ var JaegerCollectorURL = "http://localhost:14268/api/traces"
 
 // InitTracer creates a new tracer for a service.
 func InitTracer(serviceName, instanceName string) (trace.Tracer, func(), error) {
-
 	tp, err := newTracerProvider(serviceName, instanceName)
 	if err != nil {
 		return nil, nil, fmt.Errorf("couldn't initialize tracer provider: %w", err)
@@ -44,7 +43,7 @@ func InitTracer(serviceName, instanceName string) (trace.Tracer, func(), error) 
 // about the application.
 func newTracerProvider(serviceName, instanceName string) (*tracesdk.TracerProvider, error) {
 	// Create the Jaeger exporter
-	exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(JaegerCollectorURL)))
+	exp, err := otel.New(context.Background(), otel.WithEndpoint(JaegerCollectorURL))
 	if err != nil {
 		return nil, err
 	}

@@ -7,12 +7,12 @@ import (
 
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel/trace"
+	"go.opentelemetry.io/otel/trace/embedded"
 )
 
 // Get makes a traced HTTP GET call.
 func Get(ctx context.Context, url string, tracer trace.Tracer) error {
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
-
 	if err != nil {
 		return err
 	}
@@ -20,7 +20,7 @@ func Get(ctx context.Context, url string, tracer trace.Tracer) error {
 	client := http.Client{
 		Transport: otelhttp.NewTransport(
 			http.DefaultTransport,
-			otelhttp.WithTracerProvider(&tracerProvider{tracer}),
+			otelhttp.WithTracerProvider(&tracerProvider{tracer: tracer}),
 		),
 	}
 	res, err := client.Do(req)
@@ -37,6 +37,7 @@ func Get(ctx context.Context, url string, tracer trace.Tracer) error {
 }
 
 type tracerProvider struct {
+	embedded.TracerProvider
 	tracer trace.Tracer
 }
 
