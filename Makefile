@@ -38,6 +38,4 @@ fmt:
 
 .PHONY: lint
 lint:
-	@[ ! -s "$(FMT_LOG)" ] || (echo "Formatting failures, run 'make fmt'" | cat - $(FMT_LOG)&& false)
-	./scripts/check-semconv-version.sh
-	./scripts/check-go-version.sh
+	$(LINT) -v run
