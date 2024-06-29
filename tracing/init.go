@@ -43,7 +43,7 @@ func InitTracer(serviceName, instanceName string) (trace.Tracer, func(), error) 
 // about the application.
 func newTracerProvider(serviceName, instanceName string) (*tracesdk.TracerProvider, error) {
 	// Create the Jaeger exporter
-	exp, err := otel.New(context.Background(), otel.WithEndpoint(JaegerCollectorURL))
+	exp, err := otel.New(context.Background(), otel.WithEndpointURL(JaegerCollectorURL))
 	if err != nil {
 		return nil, err
 	}
