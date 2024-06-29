@@ -8,10 +8,10 @@ import (
 
 var oneService = &model.Config{
 	Services: []*model.Service{
-		&model.Service{
+		{
 			Name: "ui",
 			Endpoints: []*model.Endpoint{
-				&model.Endpoint{
+				{
 					Name: "/",
 				},
 			},

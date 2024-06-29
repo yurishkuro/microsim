@@ -12,7 +12,6 @@ import (
 // Get makes a traced HTTP GET call.
 func Get(ctx context.Context, url string, tracer trace.Tracer) error {
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
-
 	if err != nil {
 		return err
 	}
