@@ -86,7 +86,7 @@ func (c *Config) Run() {
 }
 
 func (c *Config) runWorker(instanceName string, stop chan struct{}, done *sync.WaitGroup) {
-	tracer, shutdown, err := tracing.InitTracer("test-executor", instanceName)
+	tracerProvider, shutdown, err := tracing.InitTracer("test-executor", instanceName)
 	if err != nil {
 		log.Fatalf("failed to create a tracer: %v", err)
 	}
@@ -98,7 +98,7 @@ func (c *Config) runWorker(instanceName string, stop chan struct{}, done *sync.W
 		case <-stop:
 			return
 		default:
-			c.runTest(tracer)
+			c.runTest(tracerProvider)
 		}
 		if repeats > 0 {
 			repeats--
@@ -109,11 +109,11 @@ func (c *Config) runWorker(instanceName string, stop chan struct{}, done *sync.W
 	}
 }
 
-func (c *Config) runTest(tracer trace.Tracer) {
+func (c *Config) runTest(tracerProvider trace.TracerProvider) {
 	rootSvc := c.Services[0]
 	inst := rootSvc.instances[0]
 	endpoint := inst.Endpoints[0]
-
+	tracer := tracerProvider.Tracer("otel") // TODO: Need to verify this line of code
 	ctx, rootSpan := tracer.Start(
 		context.Background(),
 		"runTest",
@@ -121,7 +121,7 @@ func (c *Config) runTest(tracer trace.Tracer) {
 	)
 	defer rootSpan.End()
 
-	err := endpoint.Call(ctx, tracer)
+	err := endpoint.Call(ctx, tracerProvider)
 	if err != nil {
 		log.Printf("transaction failed: %v", err)
 	}

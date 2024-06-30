@@ -32,14 +32,14 @@ func (p *Parallel) Validate(r *Registry) error {
 }
 
 // Call makes calls to all dependencies.
-func (p *Parallel) Call(ctx context.Context, tracer trace.Tracer) error {
+func (p *Parallel) Call(ctx context.Context, tracerProvider trace.TracerProvider) error {
 	if p.MaxPar == 0 {
-		return p.fullParCall(ctx, tracer)
+		return p.fullParCall(ctx, tracerProvider)
 	}
-	return p.maxParCall(ctx, tracer)
+	return p.maxParCall(ctx, tracerProvider)
 }
 
-func (p *Parallel) fullParCall(ctx context.Context, tracer trace.Tracer) error {
+func (p *Parallel) fullParCall(ctx context.Context, tracerProvider trace.TracerProvider) error {
 	// done := &sync.WaitGroup{}
 	// done.Add(len(p.Items))
 
@@ -54,7 +54,7 @@ func (p *Parallel) fullParCall(ctx context.Context, tracer trace.Tracer) error {
 	return nil
 }
 
-func (p *Parallel) maxParCall(ctx context.Context, tracer trace.Tracer) error {
+func (p *Parallel) maxParCall(ctx context.Context, tracerProvider trace.TracerProvider) error {
 	done := &sync.WaitGroup{}
 	done.Add(len(p.Items))
 
@@ -70,7 +70,7 @@ func (p *Parallel) maxParCall(ctx context.Context, tracer trace.Tracer) error {
 	for i := 0; i < p.MaxPar; i++ {
 		go func() {
 			for n := range ch {
-				err := p.Items[n].Call(ctx, tracer)
+				err := p.Items[n].Call(ctx, tracerProvider)
 				if err != nil {
 					errMutex.Lock()
 					topErrors = append(topErrors, err)
