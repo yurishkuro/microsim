@@ -113,7 +113,7 @@ func (c *Config) runTest(tracerProvider trace.TracerProvider) {
 	rootSvc := c.Services[0]
 	inst := rootSvc.instances[0]
 	endpoint := inst.Endpoints[0]
-	tracer := tracerProvider.Tracer("otel") // TODO: Need to verify this line of code
+	tracer := tracerProvider.Tracer("worker")
 	ctx, rootSpan := tracer.Start(
 		context.Background(),
 		"runTest",
