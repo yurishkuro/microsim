@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"go.opentelemetry.io/otel/attribute"
@@ -13,9 +14,6 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.12.0"
 	"go.opentelemetry.io/otel/trace"
 )
-
-// JaegerCollectorURL defines the address of Jaeger collector to submit spans.
-var JaegerCollectorURL = "http://localhost:14268/api/traces"
 
 // InitTracer creates a new tracer for a service.
 func InitTracer(serviceName, instanceName string) (trace.TracerProvider, func(), error) {
@@ -42,7 +40,7 @@ func InitTracer(serviceName, instanceName string) (trace.TracerProvider, func(),
 // about the application.
 func newTracerProvider(serviceName, instanceName string) (*tracesdk.TracerProvider, error) {
 	// Create the OTEL exporter
-	exp, err := otel.New(context.Background(), otel.WithEndpointURL(JaegerCollectorURL))
+	exp, err := otel.New(context.Background(), otel.WithEndpointURL(os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")))
 	if err != nil {
 		return nil, err
 	}
