@@ -10,6 +10,7 @@ import (
 	"github.com/yurishkuro/microsim/tracing"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/trace"
 )
@@ -123,7 +124,8 @@ func (c *Config) runTest(tracerProvider trace.TracerProvider) {
 
 	err := endpoint.Call(ctx, tracerProvider)
 	if err != nil {
-		log.Printf("transaction failed: %v", err)
+		rootSpan.RecordError(err)
+		rootSpan.SetStatus(codes.Error, err.Error())
 	}
 	if c.SleepBetweenRequests != 0 {
 		time.Sleep(c.SleepBetweenRequests)
