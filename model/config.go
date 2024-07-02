@@ -100,6 +100,7 @@ func (c *Config) runWorker(instanceName string, stop chan struct{}, done *sync.W
 			return
 		default:
 			c.runTest(tracerProvider)
+			time.Sleep(c.SleepBetweenRequests)
 		}
 		if repeats > 0 {
 			repeats--
@@ -126,8 +127,5 @@ func (c *Config) runTest(tracerProvider trace.TracerProvider) {
 	if err != nil {
 		rootSpan.RecordError(err)
 		rootSpan.SetStatus(codes.Error, err.Error())
-	}
-	if c.SleepBetweenRequests != 0 {
-		time.Sleep(c.SleepBetweenRequests)
 	}
 }
