@@ -23,7 +23,6 @@ var (
 )
 
 func main() {
-	// flag.StringVar(&tracing.JaegerCollectorURL, "j", tracing.JaegerCollectorURL, "address of Jaeger collector to submit spans")
 	flag.Parse()
 
 	if *simulation == "" {

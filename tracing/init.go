@@ -4,11 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"go.opentelemetry.io/otel/attribute"
-	otel "go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
+	otlptracehttp "go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/sdk/resource"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.12.0"
@@ -39,8 +38,7 @@ func InitTracer(serviceName, instanceName string) (trace.TracerProvider, func(),
 // TracerProvider will also use a Resource configured with all the information
 // about the application.
 func newTracerProvider(serviceName, instanceName string) (*tracesdk.TracerProvider, error) {
-	// Create the OTEL exporter
-	exp, err := otel.New(context.Background(), otel.WithEndpointURL(os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")))
+	exp, err := otlptracehttp.New(context.Background())
 	if err != nil {
 		return nil, err
 	}
