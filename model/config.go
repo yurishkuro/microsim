@@ -123,7 +123,7 @@ func (c *Config) runTest(tracerProvider trace.TracerProvider) {
 
 	err := endpoint.Call(ctx, tracerProvider)
 	if err != nil {
-		log.Printf("transaction failed: %v", err)
+		rootSpan.RecordError(err)
 	}
 	if c.SleepBetweenRequests != 0 {
 		time.Sleep(c.SleepBetweenRequests)
