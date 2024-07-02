@@ -37,7 +37,7 @@ func (s *ServiceDep) Validate(r *Registry) error {
 }
 
 // Call makes call to dependency service.
-func (s *ServiceDep) Call(ctx context.Context, tracer trace.Tracer) error {
+func (s *ServiceDep) Call(ctx context.Context, tracerProvider trace.TracerProvider) error {
 	url := s.service.NextServerURL() + s.endpoint.Name
-	return client.Get(ctx, url, tracer)
+	return client.Get(ctx, url, tracerProvider)
 }

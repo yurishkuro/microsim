@@ -21,7 +21,7 @@ between simulations in each worker.
 
 The tool comes with a built-in configuration for Jaeger's HotROD application that can be printed with:
 
-```sh
+```shell
 docker run yurishkuro/microsim -o | jq
 ```
 
@@ -35,8 +35,25 @@ docker run yurishkuro/microsim -o | jq
 
 To see all command line options:
 
-```sh
+```shell
 docker run yurishkuro/microsim -h
+```
+
+`microsim` uses OpenTelemetry SDK to export traces. By default it will try to send them to `https://localhost:4318/v1/traces` (with TLS enabled). This can be changed by setting environment variables supported by the SDK:
+  * `OTEL_EXPORTER_OTLP_ENDPOINT` to point to a different host/port.
+  * `OTEL_EXPORTER_OTLP_INSECURE=true` if you just want to switch default URL to `http` instead of `https`.
+
+Note that when we run `microsim` as a container, the `localhost` refers to the container's inner network namespace, so it will not be able to reach the collector even if it's running on the same host. You might see an error like this:
+
+```
+2024/07/02 18:06:07 traces export: Post "https://localhost:4318/v1/traces": dial tcp [::1]:4318: connect: connection refused
+```
+
+To work around that, refer to the IP address of the host instead:
+
+```shell
+docker run --env OTEL_EXPORTER_OTLP_ENDPOINT=https://{YOUR_IP_ADDRESS}:4318/v1/traces \
+  yurishkuro/microsim -w=1 -r=1
 ```
 
 ## License

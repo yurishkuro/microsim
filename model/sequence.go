@@ -21,9 +21,9 @@ func (s Sequence) Validate(r *Registry) error {
 }
 
 // Call makes calls to all dependencies.
-func (s Sequence) Call(ctx context.Context, tracer trace.Tracer) error {
+func (s Sequence) Call(ctx context.Context, tracerProvider trace.TracerProvider) error {
 	for _, dep := range s {
-		if err := dep.Call(ctx, tracer); err != nil {
+		if err := dep.Call(ctx, tracerProvider); err != nil {
 			return err
 		}
 	}

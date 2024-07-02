@@ -10,7 +10,6 @@ import (
 
 	"github.com/yurishkuro/microsim/config"
 	"github.com/yurishkuro/microsim/model"
-	"github.com/yurishkuro/microsim/tracing"
 )
 
 var (
@@ -24,7 +23,6 @@ var (
 )
 
 func main() {
-	flag.StringVar(&tracing.JaegerCollectorURL, "j", tracing.JaegerCollectorURL, "address of Jaeger collector to submit spans")
 	flag.Parse()
 
 	if *simulation == "" {

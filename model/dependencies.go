@@ -42,12 +42,12 @@ func (d *Dependencies) Validate(r *Registry) error {
 }
 
 // Call makes calls to all dependencies.
-func (d *Dependencies) Call(ctx context.Context, tracer trace.Tracer) error {
+func (d *Dependencies) Call(ctx context.Context, tracerProvider trace.TracerProvider) error {
 	if len(d.Seq) > 0 {
-		return d.Seq.Call(ctx, tracer)
+		return d.Seq.Call(ctx, tracerProvider)
 	}
 	if d.Par != nil {
-		return d.Par.Call(ctx, tracer)
+		return d.Par.Call(ctx, tracerProvider)
 	}
-	return d.Service.Call(ctx, tracer)
+	return d.Service.Call(ctx, tracerProvider)
 }

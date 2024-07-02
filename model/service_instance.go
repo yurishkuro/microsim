@@ -16,20 +16,20 @@ type ServiceInstance struct {
 	service   *Service
 	server    *httptest.Server
 	tracing   struct {
-		tracer   trace.Tracer
-		shutdown func()
+		tracerProvider trace.TracerProvider
+		shutdown       func()
 	}
 }
 
 func startServiceInstance(service *Service, instanceName string) (*ServiceInstance, error) {
-	tracer, shutdown, err := tracing.InitTracer(service.Name, instanceName)
+	tracerProvider, shutdown, err := tracing.InitTracer(service.Name, instanceName)
 	if err != nil {
 		return nil, err
 	}
 	inst := &ServiceInstance{
 		service: service,
 	}
-	inst.tracing.tracer = tracer
+	inst.tracing.tracerProvider = tracerProvider
 	inst.tracing.shutdown = shutdown
 	inst.server = httptest.NewServer(inst.mux())
 	log.Printf("started service instance %s at %s", instanceName, inst.server.URL)
@@ -45,7 +45,7 @@ func (inst *ServiceInstance) mux() http.Handler {
 		wrappedHandler := otelhttp.NewHandler(
 			endpointInstance,
 			endpointInstance.Name,
-			otelhttp.WithTracerProvider(newSingletonTracerProvider(inst.tracing.tracer)),
+			otelhttp.WithTracerProvider(inst.tracing.tracerProvider),
 			otelhttp.WithSpanNameFormatter(func(_ string, _ *http.Request) string {
 				return endpointInstance.Name
 			}),
@@ -60,16 +60,4 @@ func (inst *ServiceInstance) Stop() {
 	inst.server.Close()
 	inst.tracing.shutdown()
 	log.Printf("stopped service instance %s", inst.service.Name)
-}
-
-type singletonTracerProvider struct {
-	tracer trace.Tracer
-}
-
-func (p *singletonTracerProvider) Tracer(_ string, _ ...trace.TracerOption) trace.Tracer {
-	return p.tracer
-}
-
-func newSingletonTracerProvider(tracer trace.Tracer) trace.TracerProvider {
-	return &singletonTracerProvider{tracer}
 }

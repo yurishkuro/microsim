@@ -26,7 +26,7 @@ func (e *EndpointInstance) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // executes the endpoint, calling dependencies if necessary.
 func (e *EndpointInstance) execute(ctx context.Context) error {
 	if e.Depends != nil {
-		if err := e.Depends.Call(ctx, e.service.tracing.tracer); err != nil {
+		if err := e.Depends.Call(ctx, e.service.tracing.tracerProvider); err != nil {
 			return err
 		}
 	}
@@ -34,7 +34,7 @@ func (e *EndpointInstance) execute(ctx context.Context) error {
 }
 
 // Call makes a call to this endpoint.
-func (e *EndpointInstance) Call(ctx context.Context, tracer trace.Tracer) error {
+func (e *EndpointInstance) Call(ctx context.Context, tracerProvider trace.TracerProvider) error {
 	url := e.service.server.URL + e.Name
-	return client.Get(ctx, url, tracer)
+	return client.Get(ctx, url, tracerProvider)
 }
