@@ -8,5 +8,6 @@
     "gomodTidy",
     "gomodUpdateImportPaths"
   ],
-  "suppressNotifications": ["prEditedNotification"]
+  "suppressNotifications": ["prEditedNotification"],
+  "schedule": ["on the first day of the month"]
 }
