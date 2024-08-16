@@ -1,6 +1,6 @@
 module github.com/yurishkuro/microsim/internal/tools
 
-go 1.22
+go 1.23
 
 require (
 	github.com/golangci/golangci-lint v1.60.1
