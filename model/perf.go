@@ -2,7 +2,7 @@ package model
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"math"
 	"math/rand"
 	"time"
@@ -58,7 +58,7 @@ func (l *Latency) simulate() {
 
 func (f *Failure) simulate() error {
 	if rand.Float64() < f.Probability {
-		return fmt.Errorf(f.Messages[rand.Intn(len(f.Messages))])
+		return errors.New(f.Messages[rand.Intn(len(f.Messages))])
 	}
 	return nil
 }
