@@ -4,7 +4,7 @@ go 1.23
 
 require (
 	github.com/golangci/golangci-lint v1.61.0
-	github.com/josephspurrier/goversioninfo v1.4.0
+	github.com/josephspurrier/goversioninfo v1.4.1
 	mvdan.cc/gofumpt v0.7.0
 )
 
