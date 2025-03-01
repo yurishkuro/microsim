@@ -1,7 +1,7 @@
 FROM alpine:3.21.3 AS cert
 RUN apk add --update --no-cache ca-certificates
 
-FROM golang:1.23 AS builder
+FROM golang:1.24 AS builder
 
 WORKDIR /app
 
