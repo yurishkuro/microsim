@@ -13,6 +13,6 @@ package tools
 import (
 	_ "mvdan.cc/gofumpt"
 
-	_ "github.com/golangci/golangci-lint/cmd/golangci-lint"
+	_ "github.com/golangci/golangci-lint/v2/cmd/golangci-lint"
 	_ "github.com/josephspurrier/goversioninfo/cmd/goversioninfo"
 )
