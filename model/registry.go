@@ -12,7 +12,7 @@ func (r *Registry) RegisterServices(s []*Service) error {
 	r.services = make(map[string]*Service)
 	for _, service := range s {
 		if _, ok := r.services[service.Name]; ok {
-			return fmt.Errorf("Duplicate service name %s", service.Name)
+			return fmt.Errorf("duplicate service name %s", service.Name)
 		}
 		r.services[service.Name] = service
 	}

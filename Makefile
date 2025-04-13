@@ -37,5 +37,5 @@ fmt:
 	@$(GOFUMPT) -e -l -w $(ALL_SRC)
 
 .PHONY: lint
-lint:
+lint: $(LINT)
 	$(LINT) -v run
