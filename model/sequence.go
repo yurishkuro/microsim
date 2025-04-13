@@ -14,7 +14,7 @@ type Sequence []Dependencies
 func (s Sequence) Validate(r *Registry) error {
 	for i := range s {
 		if err := s[i].Validate(r); err != nil {
-			return fmt.Errorf("Sequence[%d]: dependency validation error: %v", i, err)
+			return fmt.Errorf("failed to validate Sequence[%d]: dependency validation error: %v", i, err)
 		}
 	}
 	return nil
