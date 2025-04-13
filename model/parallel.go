@@ -18,15 +18,15 @@ type Parallel struct {
 // Validate performs validation and sets defaults.
 func (p *Parallel) Validate(r *Registry) error {
 	if len(p.Items) == 0 {
-		return fmt.Errorf("Par requires items")
+		return fmt.Errorf("failed to validate Par: par requires items")
 	}
 	for i := range p.Items {
 		if err := p.Items[i].Validate(r); err != nil {
-			return fmt.Errorf("Par.Item[%d]: %v", i, err)
+			return fmt.Errorf("failed to validate Par: par.Item[%d]: %v", i, err)
 		}
 	}
 	if p.MaxPar < 0 {
-		return fmt.Errorf("expecting Par.MaxPar > 0")
+		return fmt.Errorf("failed to validate Par: expecting Par.MaxPar > 0")
 	}
 	return nil
 }

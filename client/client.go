@@ -27,7 +27,9 @@ func Get(ctx context.Context, url string, tp trace.TracerProvider) error {
 		return err
 	}
 
-	res.Body.Close()
+	if err := res.Body.Close(); err != nil {
+		return fmt.Errorf("failed to close response body: %w", err)
+	}
 	if res.StatusCode != 200 {
 		return fmt.Errorf("%s returned status code %d", url, res.StatusCode)
 	}
