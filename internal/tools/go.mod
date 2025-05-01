@@ -4,7 +4,7 @@ go 1.24
 
 require (
 	github.com/golangci/golangci-lint/v2 v2.1.5
-	github.com/josephspurrier/goversioninfo v1.4.1
+	github.com/josephspurrier/goversioninfo v1.5.0
 	mvdan.cc/gofumpt v0.8.0
 )
 
