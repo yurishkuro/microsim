@@ -60,6 +60,6 @@ jobs:
         platforms: linux/amd64,linux/arm64
 
     - name: SBOM Generation
-      uses: anchore/sbom-action@v0.20.6
+      uses: anchore/sbom-action@v0.20.10
       with:
         artifact-name: microsim-SBOM.spdx.json
