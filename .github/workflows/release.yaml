@@ -29,7 +29,7 @@ jobs:
 
     - name: Extract tags/labels from Git
       id: docker_meta
-      uses: docker/metadata-action@v5
+      uses: docker/metadata-action@v6
       with:
         images: yurishkuro/microsim
         # The 'tags:' section defines how the Docker image will be tagged:
