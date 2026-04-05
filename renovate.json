@@ -9,5 +9,11 @@
     "gomodUpdateImportPaths"
   ],
   "suppressNotifications": ["prEditedNotification"],
-  "schedule": ["on the first day of the month"]
+  "schedule": ["on the first day of the month"],
+  "packageRules": [
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions"
+    }
+  ]
 }
