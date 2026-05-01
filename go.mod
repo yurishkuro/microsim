@@ -2,7 +2,7 @@ module github.com/yurishkuro/microsim
 
 go 1.25.0
 
-toolchain go1.26.1
+toolchain go1.26.2
 
 require (
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.67.0
