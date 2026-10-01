@@ -4,7 +4,7 @@ go 1.25.0
 
 require (
 	github.com/golangci/golangci-lint/v2 v2.12.1
-	github.com/josephspurrier/goversioninfo v1.5.0
+	github.com/josephspurrier/goversioninfo v1.7.0
 	mvdan.cc/gofumpt v0.9.2
 )
 
